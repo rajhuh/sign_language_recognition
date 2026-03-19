@@ -1,0 +1,7 @@
+flask
+numpy
+opencv-python-headless
+joblib
+scikit-learn==1.6.1
+mediapipe==0.10.9
+gunicorn
