@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Language Recognition</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align: center;
+background-color: #111;
+color: white;
+}
+
+h1{
+margin-top: 30px;
+}
+
+video{
+border: 3px solid white;
+margin-top: 20px;
+border-radius: 10px;
+}
+
+button{
+margin-top: 20px;
+padding: 12px 25px;
+font-size: 18px;
+cursor: pointer;
+border-radius: 6px;
+border: none;
+background-color: #4CAF50;
+color: white;
+}
+
+#prediction{
+font-size: 40px;
+margin-top: 30px;
+font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Sign Language Recognition</h1>
+
+<video id="video" width="450" autoplay></video>
+
+<br>
+
+<button onclick="capture()">Predict Sign</button>
+
+<div id="prediction">Prediction: </div>
+
+<script>
+
+const video = document.getElementById("video")
+
+// start webcam
+navigator.mediaDevices.getUserMedia({video:true})
+.then(stream => {
+video.srcObject = stream
+})
+
+function capture(){
+
+let canvas = document.createElement("canvas")
+
+canvas.width = video.videoWidth
+canvas.height = video.videoHeight
+
+let ctx = canvas.getContext("2d")
+
+ctx.drawImage(video,0,0)
+
+canvas.toBlob(async function(blob){
+
+let formData = new FormData()
+
+formData.append("image", blob, "frame.jpg")
+
+let response = await fetch("/predict",{
+method:"POST",
+body:formData
+})
+
+let result = await response.json()
+
+document.getElementById("prediction").innerText =
+"Prediction: " + result.prediction
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
